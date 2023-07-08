@@ -19,44 +19,43 @@ df_5 = pd.read_csv('API1_fucnion5.csv')
 df_6 = pd.read_csv('API1_fucnion6.csv')
 df = pd.read_csv('API1_fucnion7.csv')
 
+#1
 @app.get('/peliculas_idioma/{Idioma}')
-def peliculas_idioma(Idioma:str):
+def peliculas_idioma(Idioma: str):
     if isinstance(Idioma, str):  
         Idioma = Idioma.lower()
-        Idioma = unicodedata.normalize('NFKD', Idioma).encode('ascii', 'ignore').decode('utf-8','ignore')
-    '''Ingresas el idioma(dos primeras letras escrito en ingles), retornando la cantidad de peliculas producidas en el mismo'''
+        Idioma = unicodedata.normalize('NFKD', Idioma).encode('ascii', 'ignore').decode('utf-8','ignore')  # Eliminar acento
+    """Recibe un idioma y devuelve la cantidad de películas producidas en ese idioma(las dos primereas letras en ingles)."""
     peliculas = df_1[df_1['original_language'] == Idioma]
-    cantidad = len(peliculas)
-    
-    return {'idioma':Idioma, 'cantidad':cantidad}
-   
 
+    cantidad = len(peliculas)
+    return {'idioma': Idioma, 'cantidad': cantidad}
+   
+#2
 @app.get('/peliculas_duracion/{Pelicula}')
 def peliculas_duracion(Pelicula: str):
-    if isinstance(Pelicula, str): 
-        Pelicula = Pelicula.lower()
-        Pelicula = unicodedata.normalize('NFKD', Pelicula).encode('ascii', 'ignore').decode('utf-8','ignore')
-    '''Ingresas la pelicula, retornando la duracion y el año'''
-    pelicula = df_2[df_2['title'] == Pelicula]
+    """
+    Recibe el título de una película y devuelve la duración y el año de lanzamiento.
+    """
+    Pelicula = unicodedata.normalize('NFKD', Pelicula).encode('ascii', 'ignore').decode('utf-8', 'ignore')
+    pelicula = df_2.loc[df_2['title'].str.lower() == Pelicula.lower()]
+
     if pelicula.empty:
-        return "No se encontró la película "
+        return "No se encontró la película en el dataset"
+
     duracion = pelicula['runtime'].values[0]
-    anio = pelicula['release_year'].values[0]
+    año = pelicula['release_year'].values[0]
 
-    return {'pelicula':pelicula, 'duracion':duracion, 'Anio':anio}
-    
+    return f"{Pelicula}. Duración: {duracion} minutos. Año: {año}"
 
+#3
 @app.get('/franquicia/{Franquicia}')
 def franquicia(Franquicia: str):
-    if isinstance(Franquicia, str):  
-        Franquicia = Franquicia.lower()
-        Franquicia = unicodedata.normalize('NFKD', Franquicia).encode('ascii', 'ignore').decode('utf-8','ignore')
     '''Se ingresa la franquicia, retornando la cantidad de peliculas, ganancia total y promedio'''
-    
-    franquicia = df_3[df_3['belongs_to_collection'] == Franquicia]
+    franquicia = df_3[df_3['belongs_to_collection'].str.lower() == Franquicia.lower()]
     if franquicia.empty:
         return "No se encontró la franquicia en el dataset"
-    cantidad_peliculas = len(franquicia)
+    cantidad_peliculas = franquicia.shape[0]
     ganancia_total = franquicia['revenue'].sum()
     ganancia_promedio = franquicia['revenue'].mean()
 
@@ -64,20 +63,20 @@ def franquicia(Franquicia: str):
 
 
 
+
+#4
 @app.get('/peliculas_pais/{Pais}')
-def peliculas_pais(Pais:str):
-    if isinstance(Pais, str):  
-        Pais = Pais.lower()
-        Pais = unicodedata.normalize('NFKD', Paimos).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-    """
-    Ingresas el pais y devuelve la cantidad de películas producidas en el mismo.
-    """
+def peliculas_pais(Pais: str):
+    Pais = Pais.lower()
+    """ Recibe el nombre de un país y devuelve la cantidad de películas producidas en el mismo."""
     df_clean = df_4.dropna(subset=['production_countries'])
-    peliculas = df_clean[df_clean['production_countries'].str.contains(Pais)]
+    peliculas = df_clean[df_clean['production_countries'].str.contains(Pais, case=False)]
     cantidad_peliculas = len(peliculas)
 
-    return {'pais':Pais, 'cantidad':cantidad_peliculas}
+    return {'pais': Pais, 'cantidad': cantidad_peliculas}
 
+
+#5
 @app.get('/productoras_exitosas/{Productora}')
 def productoras_exitosas(Productora:str):
     '''Ingresas la productora, entregandote el revunue total y la cantidad de peliculas que realizo '''
@@ -91,65 +90,61 @@ def productoras_exitosas(Productora:str):
     return {'productora':Productora, 'revenue_total': revenue_total,'cantidad':cantidad_peliculas}
     
 
-
+#6
 @app.get('/get_director/{nombre_director}')
-def get_director(nombre_director:str):
-    ''' Se ingresa el nombre de un director que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. 
-    Además, deberá devolver el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma. En formato lista'''
-    if isinstance(nombre_director, str):
-        nombre_director = nombre_director.lower()
-        nombre_director = unicodedata.normalize('NFKD', nombre_director).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-        
-        director_films = df_6[df_6['crew'].str.contains(nombre_director, case=False) & ~df_6['crew'].str.contains('director', case=False)]
+def get_director(nombre_director: str):
+    nombre_director = nombre_director.lower()
+    nombre_director = unicodedata.normalize('NFKD', nombre_director).encode('ascii', 'ignore').decode('utf-8', 'ignore')
+    
+    """  Ingesar  nombre de un director devuelve el éxito del mismo medido a través del retorno. 
+    nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma"""
+    director_films = df_6[df_6['crew'].str.contains(nombre_director, case=False, regex=False) & ~df_6['crew'].str.contains('director', case=False, regex=False)]
 
-        if director_films.empty:
-            return "No se encontró información para el director: {}".format(nombre_director)
-        else:
-            cantidad_films = director_films.shape[0]
-            retorno_total = director_films['return'].sum()
-            exito_director = retorno_total / cantidad_films
+    if director_films.empty:
+        return "No se encontró información para el director: {}".format(nombre_director)
+    
+    cantidad_films = len(director_films)
+    retorno_total = director_films['return'].sum()
+    exito_director = retorno_total / cantidad_films
 
-            detalles_peliculas = director_films[['title', 'release_date', 'return', 'budget', 'revenue']]
-            detalles_peliculas = detalles_peliculas.rename(columns={
-                'title': 'Título',
-                'release_date': 'Fecha de Lanzamiento',
-                'return': ' Retorno',
-                'budget': 'Presupuesto',
-                'revenue': 'Ganancia'
-            })
-#(" El éxito del mismo medido a través del retorno es de:")
-            return {'director':nombre_director, 'retorno_total_director':exito_director}, detalles_peliculas
-    else:
-        return "El nombre del director debe ser una cadena de texto."
+    detalles_peliculas = director_films[['title', 'release_date', 'return', 'budget', 'revenue']]
+    detalles_peliculas = detalles_peliculas.rename(columns={
+        'title': 'Título',
+        'release_date': 'Fecha de Lanzamiento',
+        'return': 'Retorno',
+        'budget': 'Presupuesto',
+        'revenue': 'Ganancia'
+    })
+
+    return {'director': nombre_director, 'retorno_total_director': exito_director}, detalles_peliculas
 
 
 
 # ML
-ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
-ml.reset_index(drop=True, inplace=True)  # Restablecer el índice del DataFrame 'ml'
-ml.reset_index(inplace=True)  # Restablecer el índice nuevamente
-# Eliminar filas con valores NaN en la columna "features"
-ml = ml.dropna(subset=["features"])
-indices = ml[["title", "index"]]  # Obtener un dataset para encontrar el nuevo índice
-tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y  limita el número de filas a tomar 
-tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  #Modelo de entrenamiento con los datos proporcionados
 
-@app.get('/recomendacion/{titulo}')
-def recomendacion(titulo:str):
+
+@app.get('/recomendacion/{titulo}')    
+def recomendacion(titulo: str):
     '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
-    titulo = titulo.lower().strip() 
-    titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')  
-    idx = indices[indices["title"] == titulo]  
-    if idx.empty:  
-        recommendations = ["Datos no disponible"]
+    ml = df.head(10000) 
+    ml.reset_index(drop=True, inplace=True)  
+    ml.reset_index(inplace=True) 
+    ml = ml.dropna(subset=["features"])
+    indices = ml[["title", "index"]]  
+    tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  
+    tfidf_matrix = tfidf.fit_transform(ml["features"])  
+    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix) 
+    titulo = titulo.lower().strip()
+    titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')
+    idx = indices[indices["title"] == titulo]
+    if idx.empty:
+        recommendations = ["Datos no disponibles"]
     else:
-        idy = idx["index"].iloc[0] 
-        sim_score = list(enumerate(cosine_sim[idy]))  
-        sim_score = sorted(sim_score, key=lambda x: x[1], reverse=True)  
-        sim_score = sim_score[1:6]  
-        movies_index = [i[0] for i in sim_score]  
-        recommendations = list(ml['title'].iloc[movies_index].str.title())  
+        idy = idx["index"].iloc[0]
+        sim_scores = list(enumerate(cosine_sim[idy]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:6]
+        movies_indices = [i[0] for i in sim_scores]
+        recommendations = list(ml['title'].iloc[movies_indices].str.title())
 
-    return {'lista recomendada': recommendations}
-    
+    return {'lista_recomendada': recommendations}
