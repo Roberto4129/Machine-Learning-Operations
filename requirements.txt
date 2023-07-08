@@ -9,7 +9,6 @@ colorama
 contourpy
 cycler
 DateTime
-exceptiongrou
 fastapi
 fonttools
 h11
@@ -30,6 +29,3 @@ sniffio
 starlette
 threadpoolctl
 typing_extensions
-tzdata
-zope.interface
-nltk
