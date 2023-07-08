@@ -13,11 +13,11 @@ app = FastAPI()
 
 df_1 = pd.read_csv('API1_fucnion1.csv')
 df_2 = pd.read_csv('API1_fucnion2.csv')
-df_3 = pd.read_csv('API3_fucnion3.csv')
-df_4 = pd.read_csv('API3_fucnion4.csv')
-df_5 = pd.read_csv('API3_fucnion5.csv')
-df_6 = pd.read_csv('API3_fucnion6.csv')
-df = pd.read_csv('API3_fucnion7.csv')
+df_3 = pd.read_csv('API1_fucnion3.csv')
+df_4 = pd.read_csv('API1_fucnion4.csv')
+df_5 = pd.read_csv('API1_fucnion5.csv')
+df_6 = pd.read_csv('API1_fucnion6.csv')
+df = pd.read_csv('API1_fucnion7.csv')
 
 @app.get('/peliculas_idioma/{Idioma}')
 def peliculas_idioma(Idioma:str):
@@ -68,7 +68,7 @@ def franquicia(Franquicia: str):
 def peliculas_pais(Pais:str):
     if isinstance(Pais, str):  
         Pais = Pais.lower()
-        Pais = unicodedata.normalize('NFKD', Pais).encode('ascii', 'ignore').decode('utf-8', 'ignore')
+        Pais = unicodedata.normalize('NFKD', Paimos).encode('ascii', 'ignore').decode('utf-8', 'ignore')
     """
     Ingresas el pais y devuelve la cantidad de películas producidas en el mismo.
     """
@@ -150,9 +150,4 @@ def recomendacion(titulo:str):
         recommendations = list(ml['title'].iloc[movies_index].str.title())  
 
     return {'lista recomendada': recommendations}
-    
-    
-    
-
-
     
