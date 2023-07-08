@@ -9,7 +9,6 @@ colorama
 contourpy
 cycler
 DateTime
-fonttool
 idna
 joblib
 kiwisolver
