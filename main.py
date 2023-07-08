@@ -1,13 +1,23 @@
-from fastapi import FastAPI, HTTPException
+#from fastapi import, HTTPException FastAPI
+from fastapi import FastAPI
 from typing import Union
 import pandas as pd
 import numpy as np
 import json
 import unicodedata
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 
 app = FastAPI()
 
 
+df_1 = pd.read_csv('API1_fucnion1.csv')
+df_2 = pd.read_csv('API1_fucnion2.csv')
+df_3 = pd.read_csv('API3_fucnion3.csv')
+df_4 = pd.read_csv('API3_fucnion4.csv')
+df_5 = pd.read_csv('API3_fucnion5.csv')
+df_6 = pd.read_csv('API3_fucnion6.csv')
+df = pd.read_csv('API3_fucnion7.csv')
 
 @app.get('/peliculas_idioma/{Idioma}')
 def peliculas_idioma(Idioma:str):
@@ -20,8 +30,6 @@ def peliculas_idioma(Idioma:str):
     
     return {'idioma':Idioma, 'cantidad':cantidad}
    
-
-
 
 @app.get('/peliculas_duracion/{Pelicula}')
 def peliculas_duracion(Pelicula: str):
@@ -117,6 +125,14 @@ def get_director(nombre_director:str):
 
 
 # ML
+ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
+ml.reset_index(drop=True, inplace=True)  # Restablecer el índice del DataFrame 'ml'
+ml.reset_index(inplace=True)  # Restablecer el índice nuevamente
+indices = ml[["title", "index"]]  # Obtener un dataset para encontrar el nuevo índice
+tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y  limita el número de filas a tomar 
+tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  #Modelo de entrenamiento con los datos proporcionados
+
 @app.get('/recomendacion/{titulo}')
 def recomendacion(titulo:str):
     '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
