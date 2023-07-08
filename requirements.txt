@@ -9,10 +9,7 @@ colorama
 contourpy
 cycler
 DateTime
-exceptiongrou
-fastapi
-fonttools
-h11
+fonttool
 idna
 joblib
 kiwisolver
