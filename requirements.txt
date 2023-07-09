@@ -16,4 +16,4 @@ tzdata
 uvicorn
 scikit-learn          
 numpy
-starlette==0.12.0
+starlette
