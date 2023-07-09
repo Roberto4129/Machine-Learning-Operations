@@ -137,5 +137,5 @@ def recomendacion(titulo: str):
     movies_indices = [i[0] for i in sim_scores]
     recommendations = list(ml['title'].iloc[movies_indices].str.title())
 
-    return {'Película': titulo, 'Lista recomendada
+    return {'lista_recomendada': recommendations}
 
