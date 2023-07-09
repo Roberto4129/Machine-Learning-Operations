@@ -20,10 +20,10 @@ df = pd.read_csv('API1_fucnion7.csv')
 #1
 @app.get('/peliculas_idioma/{Idioma}')
 def peliculas_idioma(Idioma: str):
+    """Recibe un idioma y devuelve la cantidad de películas producidas en ese idioma(las dos primereas letras en ingles)."""
     if isinstance(Idioma, str):  
         Idioma = Idioma.lower()
         Idioma = unicodedata.normalize('NFKD', Idioma).encode('ascii', 'ignore').decode('utf-8','ignore')  # Eliminar acento
-    """Recibe un idioma y devuelve la cantidad de películas producidas en ese idioma(las dos primereas letras en ingles)."""
     peliculas = df_1[df_1['original_language'] == Idioma]
 
     cantidad = len(peliculas)
@@ -79,7 +79,7 @@ def productoras_exitosas(Productora:str):
     if isinstance(Productora, str):  
         Productora = Productora.lower()
         Productora = unicodedata.normalize('NFKD', Productora).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-    peliculas = df[df['production_companies'].str.lower().str.contains(Productora, na=False)]
+    peliculas = df_5[df_5['production_companies'].str.lower().str.contains(Productora, na=False)]
     revenue_total = peliculas['revenue'].sum()
     cantidad_peliculas = len(peliculas)
 
@@ -117,31 +117,30 @@ def get_director(nombre_director: str):
 
 
 # ML
+ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
+ml.reset_index(drop=True, inplace=True)  # Restablecer el índice del DataFrame 'ml'
+ml.reset_index(inplace=True)  # Restablecer el índice nuevamente
 
+indices = ml[["title", "index"]]  # Obtener un dataset para encontrar el nuevo índice
+tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y limita el número de filas a tomar
+tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  # Modelo de entrenamiento con los datos proporcionados
 
 @app.get('/recomendacion/{titulo}')    
 def recomendacion(titulo: str):
     '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
-    ml = df.head(10000) 
-    ml["features"].fillna("", inplace=True)
-    ml.reset_index(drop=True, inplace=True)  
-    ml.reset_index(inplace=True) 
-    ml = ml.dropna(subset=["features"])
-    indices = ml[["title", "index"]]  
-    tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  
-    tfidf_matrix = tfidf.fit_transform(ml["features"])  
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix) 
     titulo = titulo.lower().strip()
     titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')
     idx = indices[indices["title"] == titulo]
-    if idx.empty:
+   
+    if idx.empty:#condición si el conjunto de datos está vacío
         recommendations = ["Datos no disponibles"]
     else:
-        idy = idx["index"].iloc[0]
-        sim_scores = list(enumerate(cosine_sim[idy]))
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        sim_scores = sim_scores[1:6]
-        movies_indices = [i[0] for i in sim_scores]
-        recommendations = list(ml['title'].iloc[movies_indices].str.title())
+        idy = idx["index"].iloc[0] # Índice de búsqueda
+        sim_scores = list(enumerate(cosine_sim[idy])) # Configuración de similitud
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True) # Clasificación de resultados por puntuación
+        sim_scores = sim_scores[1:6] # Obtener la mejor puntuación en 5 películas
+        movies_indices = [i[0] for i in sim_scores] # Encontrar nombres
+        recommendations = list(ml['title'].iloc[movies_indices].str.title())# Haciendo la lista
 
     return {'lista_recomendada': recommendations}
