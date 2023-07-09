@@ -1,7 +1,7 @@
 anyio
 click
 colorama
-fastapi
+fastapi==0.27.0
 h11
 idna
 pandas
