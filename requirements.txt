@@ -16,5 +16,4 @@ scikit-learn
 numpy
 pydantic==0.26
 starlette==0.11.1
-email-validator   2.0.0.post2
-
+email-validator
