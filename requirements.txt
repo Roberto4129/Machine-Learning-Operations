@@ -16,4 +16,5 @@ tzdata
 uvicorn
 scikit-learn          
 numpy
-
+pydantic==0.26.0
+starlette==0.12.0
