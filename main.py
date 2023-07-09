@@ -127,6 +127,7 @@ def get_director(nombre_director: str):
 def recomendacion(titulo: str):
     '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
     ml = df.head(10000) 
+    ml["features"].fillna("", inplace=True)
     ml.reset_index(drop=True, inplace=True)  
     ml.reset_index(inplace=True) 
     ml = ml.dropna(subset=["features"])
