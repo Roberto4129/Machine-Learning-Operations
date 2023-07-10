@@ -117,7 +117,9 @@ def get_director(nombre_director: str):
 
 
 # ML
+@app.get('/recomendacion/{titulo}') 
 def recomendacion(titulo: str):
+    '''Ingresas un nombre de película y te recomienda las similares en una lista'''
     ml = df.head(10000)
     indices = ml[["title"]]
     tfidf = TfidfVectorizer(stop_words="english", max_features=10000)
