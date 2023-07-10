@@ -116,24 +116,37 @@ def get_director(nombre_director: str):
 
 # ML
 
-ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
-tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y limita el número de filas a tomar
-tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  # Modelo de entrenamiento con los datos proporcionados
-
 @app.get('/recomendacion/{titulo}') 
 def recomendacion(titulo: str):
     '''Ingresas un nombre de película y te recomienda las similares en una lista'''
-    titulo = titulo.lower().strip()
-    titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-    idx = ml[ml["title"] == titulo].index
-   
-    if len(idx) == 0:
-        recommendations = ["Datos no disponibles"]
-    else:
-        idy = idx[0]
-        sim_scores = cosine_sim[idy]  # Obtener directamente los puntajes de similitud sin enumerar
-        top_indices = np.argsort(sim_scores)[::-1][1:6]  # Obtener los índices de las películas más similares
-        recommendations = list(ml['title'].iloc[top_indices].str.title())
+    
+    ml = pd.read_csv('API1_fucnion7.csv')#limportar csv
+    ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
+    
+    tfidf = TfidfVectorizer(stop_words="english")# Configurar el vectorizador tf-idf con palabras comunes en inglés
+    ml[ "overview"] = ml[ "overview"].fillna("") #rellenar nulos
+    
+
+    # Crear la matriz tf-idf con los datos de las características de las películas
+    tfidf_matrix = tfidf.fit_transform(ml["overview"])
+
+    # Calcular la matriz de similitud coseno utilizando el kernel lineal
+    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+    
+    indices = pd.Series(ml.index, index=ml["title"]).drop_duplicates()
+
+    idx = indices[titulo] # Buscar el índice de la película en el dataset
+    
+    # Obtener los puntajes de similitud de la película encontrada con todas las demás películas
+    sim_scores = list(enumerate(cosine_sim[idx]))
+        # Ordenar los puntajes de similitud en orden descendente
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    # Obtener los índices de las películas más similares (excluyendo la película de entrada)
+    sim_scores = sim_scores[1:6]
+    movies_indices = [i[0] for i in sim_scores]
+    
+    
+    
+    recommendations = ml['title'].iloc[movies_indices].to_list()[:5]
 
     return {'lista_recomendada': recommendations}
