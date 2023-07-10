@@ -117,33 +117,24 @@ def get_director(nombre_director: str):
 
 
 # ML
-def procesar_datos(df):
+def recomendacion(titulo: str):
     ml = df.head(10000)
-    ml.reset_index(drop=True, inplace=True)
-    ml.reset_index(inplace=True)
-
-    indices = ml[["title", "index"]]
+    indices = ml[["title"]]
     tfidf = TfidfVectorizer(stop_words="english", max_features=10000)
     tfidf_matrix = tfidf.fit_transform(ml["features"])
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-
-    return ml, indices, cosine_sim
-
-ml, indices, cosine_sim = procesar_datos(df)
-
-@app.get('/recomendacion/{titulo}')    
-def recomendacion(titulo: str):
-    '''Ingresas un nombre de película y te recomienda las similares en una lista'''
     titulo = titulo.lower().strip()
     titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')
     idx = indices[indices["title"] == titulo]
-   
+
     if idx.empty:
-        recommendations = ["Datos no disponibles"]
-    else:
-        idy = idx["index"].iloc[0]
-        sim_scores = cosine_sim[idy]
-        top_indices = np.argsort(sim_scores)[::-1][1:6]
-        recommendations = list(ml.loc[top_indices, 'title'].str.title())
+        raise HTTPException(status_code=404, detail="No se encontró la película en el dataset")
+
+    idy = idx.index[0]
+    sim_scores = list(enumerate(cosine_sim[idy]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:6]
+    movies_indices = [i[0] for i in sim_scores]
+    recommendations = list(ml['title'].iloc[movies_indices].str.title())
 
     return {'lista_recomendada': recommendations}
