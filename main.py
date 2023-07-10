@@ -115,11 +115,11 @@ def get_director(nombre_director: str):
     return {'director': nombre_director, 'retorno_total_director': exito_director}, detalles_peliculas
 
 # ML
+
 ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
 tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y limita el número de filas a tomar
 tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  # Modelo de entrenamiento con los datos proporcionados
-
 
 @app.get('/recomendacion/{titulo}') 
 def recomendacion(titulo: str):
