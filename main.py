@@ -117,30 +117,33 @@ def get_director(nombre_director: str):
 
 
 # ML
-ml = df.head(10000)  # Utilizar una muestra debido al costo computacional excesivo si se utiliza todo el conjunto de datos
-ml.reset_index(drop=True, inplace=True)  # Restablecer el índice del DataFrame 'ml'
-ml.reset_index(inplace=True)  # Restablecer el índice nuevamente
+def procesar_datos(df):
+    ml = df.head(10000)
+    ml.reset_index(drop=True, inplace=True)
+    ml.reset_index(inplace=True)
 
-indices = ml[["title", "index"]]  # Obtener un dataset para encontrar el nuevo índice
-tfidf = TfidfVectorizer(stop_words="english", max_features=10000)  # Configuración del vector tf-idf, elimina las palabras comunes en inglés y limita el número de filas a tomar
-tfidf_matrix = tfidf.fit_transform(ml["features"])  # Configuración del vectorizador tf-idf con datos
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)  # Modelo de entrenamiento con los datos proporcionados
+    indices = ml[["title", "index"]]
+    tfidf = TfidfVectorizer(stop_words="english", max_features=10000)
+    tfidf_matrix = tfidf.fit_transform(ml["features"])
+    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+
+    return ml, indices, cosine_sim
+
+ml, indices, cosine_sim = procesar_datos(df)
 
 @app.get('/recomendacion/{titulo}')    
 def recomendacion(titulo: str):
-    '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
+    '''Ingresas un nombre de película y te recomienda las similares en una lista'''
     titulo = titulo.lower().strip()
     titulo = unicodedata.normalize('NFKD', titulo).encode('ascii', 'ignore').decode('utf-8', 'ignore')
     idx = indices[indices["title"] == titulo]
    
-    if idx.empty:#condición si el conjunto de datos está vacío
+    if idx.empty:
         recommendations = ["Datos no disponibles"]
     else:
-        idy = idx["index"].iloc[0] # Índice de búsqueda
-        sim_scores = list(enumerate(cosine_sim[idy])) # Configuración de similitud
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True) # Clasificación de resultados por puntuación
-        sim_scores = sim_scores[1:6] # Obtener la mejor puntuación en 5 películas
-        movies_indices = [i[0] for i in sim_scores] # Encontrar nombres
-        recommendations = list(ml['title'].iloc[movies_indices].str.title())# Haciendo la lista
+        idy = idx["index"].iloc[0]
+        sim_scores = cosine_sim[idy]
+        top_indices = np.argsort(sim_scores)[::-1][1:6]
+        recommendations = list(ml.loc[top_indices, 'title'].str.title())
 
     return {'lista_recomendada': recommendations}
