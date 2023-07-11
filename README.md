@@ -1,7 +1,7 @@
 # HENRY’S LABS
 ## Roberto Pedro DATA-12
 
-## PROYECTO INDIVIDUAL 01 DATA 12 --Machine Learning Operations
+## PROYECTO INDIVIDUAL 01 --Machine Learning Operations
 
 Este proyecto tiene como objetivo desarrollar un sistema de recomendación de películas mediante el ciclo de vida completo de un proyecto de Machine Learning, desde la transformación y limpieza de los datos hasta la implementación de una API para su consumo.
 
@@ -21,6 +21,9 @@ El rol a desempeñar es el de MLOps Engineer, encargado de llevar el modelo de r
   - Formatear las fechas en el formato AAAA-mm-dd y extraer el año en una nueva columna llamada `release_year`.
   - Crear una columna llamada `return` que contenga el retorno de inversión calculado como la división de `revenue` entre `budget`, y rellenar con 0 cuando no hay datos disponibles.
   - Eliminar las columnas no utilizadas: `video`, `imdb_id`, `adult`, `original_title`, `poster_path` y `homepage`.
+ 
+### Análisis exploratorio de los datos (EDA)
+Se realizará un análisis exploratorio de los datos para investigar las relaciones entre las variables, identificar outliers o anomalías, y descubrir patrones interesantes que puedan ser útiles en un análisis posterior. Se recomienda utilizar técnicas como nubes de palabras para identificar las palabras más frecuentes en los títulos de las películas, lo cual podría ser útil para el sistema de recomendación.
 
 ### Desarrollo de la API
 Se implementará una API utilizando el framework FastAPI. Se crearán 6 funciones para los endpoints que se consumirán en la API:
@@ -35,8 +38,7 @@ Se implementará una API utilizando el framework FastAPI. Se crearán 6 funcione
 ### Deployment
 La API será desplegada en Render , para que pueda ser consumida desde la web.
 
-### Análisis exploratorio de los datos (EDA)
-Se realizará un análisis exploratorio de los datos para investigar las relaciones entre las variables, identificar outliers o anomalías, y descubrir patrones interesantes que puedan ser útiles en un análisis posterior. Se recomienda utilizar técnicas como nubes de palabras para identificar las palabras más frecuentes en los títulos de las películas, lo cual podría ser útil para el sistema de recomendación.
+
 
 ## Conclusiones
 En este proyecto individual, se ha abordado el desarrollo de un sistema de recomendación de películas desde el rol de un MLOps Engineer. Se han aplicado transformaciones a los datos, se ha implementado una API utilizando FastAPI, se ha realizado un análisis exploratorio de los datos y se ha propuesto su despliegue en un entorno de producción. Este proyecto ha permitido poner en práctica los conocimientos y habilidades relacionados con el ciclo de vida completo de un proyecto de Machine Learning y el rol de un MLOps Engineer.
