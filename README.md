@@ -34,6 +34,7 @@ Se implementará una API utilizando el framework FastAPI. Se crearán 6 funcione
 4. `peliculas_pais(Pais: str)`: Devuelve la cantidad de películas producidas en el país especificado.
 5. `productoras_exitosas(Productora: str)`: Devuelve el revenue total y la cantidad de películas realizadas por una productora especificada.
 6. `get_director(nombre_director)`: Devuelve el éxito de un director medido a través del retorno, junto con el nombre, fecha de lanzamiento, retorno individual, costo y ganancia de cada película en formato de lista.
+7. Sistema de recoemndacion - recomendacion( titulo ): Se ingresa el nombre de una película y te recomienda las similares en una lista de 5 valores.
 
 ### Deployment
 La API será desplegada en Render , para que pueda ser consumida desde la web.
