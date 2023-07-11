@@ -23,7 +23,7 @@ El rol a desempeñar es el de MLOps Engineer, encargado de llevar el modelo de r
   - Eliminar las columnas no utilizadas: `video`, `imdb_id`, `adult`, `original_title`, `poster_path` y `homepage`.
  
 ### Análisis exploratorio de los datos (EDA)
-Se realizará un análisis exploratorio de los datos para investigar las relaciones entre las variables, identificar outliers o anomalías, y descubrir patrones interesantes que puedan ser útiles en un análisis posterior. Se recomienda utilizar técnicas como nubes de palabras para identificar las palabras más frecuentes en los títulos de las películas, lo cual podría ser útil para el sistema de recomendación.
+Se realizará un análisis exploratorio de los datos para investigar las relaciones entre las variables, identificar outliers o anomalías, y descubrir patrones interesantes que puedan ser útiles en un análisis posterior. Se utiliza técnicas como nubes de palabras para identificar las palabras más frecuentes en los títulos y resumen de las películas , lo cual podría ser útil para el sistema de recomendación.
 
 ### Desarrollo de la API
 Se implementará una API utilizando el framework FastAPI. Se crearán 6 funciones para los endpoints que se consumirán en la API:
