@@ -13,7 +13,7 @@ En el contexto de una start-up que provee servicios de agregación de plataforma
 El rol a desempeñar es el de MLOps Engineer, encargado de llevar el modelo de recomendación al mundo real. El objetivo es crear un modelo de recomendación funcional, partiendo desde cero en cuanto a la calidad y madurez de los datos.
 
 ## Propuesta de trabajo (requerimientos de aprobación)
-### Transformaciones de datos
+### Transformaciones de datos-ETL
 - Se realizarán las siguientes transformaciones a los datos:
   - Desanidar los campos anidados como `belongs_to_collection` y `production_companies`.
   - Rellenar los valores nulos de los campos `revenue` y `budget` con el número 0.
