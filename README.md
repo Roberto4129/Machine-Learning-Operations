@@ -1,7 +1,7 @@
 # HENRY’S LABS
+## Roberto Pedro DATA-12
 
-##PROYECTO INDIVIDUAL 01 DATA 12 --Machine Learning Operations
-
+## PROYECTO INDIVIDUAL 01 DATA 12 --Machine Learning Operations
 
 Este proyecto tiene como objetivo desarrollar un sistema de recomendación de películas mediante el ciclo de vida completo de un proyecto de Machine Learning, desde la transformación y limpieza de los datos hasta la implementación de una API para su consumo.
 
