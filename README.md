@@ -44,4 +44,5 @@ La API será desplegada en Render , para que pueda ser consumida desde la web.
 ## Conclusiones
 En este proyecto individual, se ha abordado el desarrollo de un sistema de recomendación de películas desde el rol de un MLOps Engineer. Se han aplicado transformaciones a los datos, se ha implementado una API utilizando FastAPI, se ha realizado un análisis exploratorio de los datos y se ha propuesto su despliegue en un entorno de producción. Este proyecto ha permitido poner en práctica los conocimientos y habilidades relacionados con el ciclo de vida completo de un proyecto de Machine Learning y el rol de un MLOps Engineer.
 
+
 Video: https://www.youtube.com/watch?v=KmNUSyyOqDM&t=388s
