@@ -46,3 +46,4 @@ En este proyecto individual, se ha abordado el desarrollo de un sistema de recom
 
 
 Video: https://www.youtube.com/watch?v=KmNUSyyOqDM&t=388s
+
